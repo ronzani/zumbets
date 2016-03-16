@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+
+{% block content %}
+        <div class="row" style="margin-top: 100px">
+            <div class="col s12 offset-l3 l6">
+                {% if msg_sucess %}
+                    <div class="card-panel green lighten-1">
+                        <span>{{ msg_sucess }}</span>
+                    </div>
+                {% endif %}
+                <div class="card">
+                    <div class="card-content">
+                        <span class="card-title grey-text text-darken-4">
+                            <h4>Login</h4>
+                        </span>
+                        {% if msg_error %}
+                            <div class="row">
+                                <div class="card-panel red lighten-2 white-text">
+                                  <p> {{ msg_error }} </p>
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        {% if form.non_field_errors %}
+                            <div class="card-panel red lighten-2 white-text">
+                                {% for error in form.non_field_errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <form method="post" id="login-form">
+                            {% csrf_token %}
+                            <input type="hidden" name="submit_login" value="True" />
+                            <input type="hidden" name="next" value="{{ next }}" />
+                            <div class="row">
+                                <div class="input-field col s12">
+                                    <i class="material-icons prefix">person</i>
+                                    {{ form.username }}
+                                    {{ form.username.label_tag }}
+                                    {% if form.username.errors %}
+                                        <span class="red-text">{{ form.username.errors }}</span>
+                                    {% endif %}
+                                </div>
+                                <div class="input-field col s12">
+                                    <i class="material-icons prefix">vpn_key</i>
+                                    {{ form.password }}
+                                    {{ form.password.label_tag }}
+                                    {% if form.password.errors %}
+                                        <span class="red-text">{{ form.password.errors }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <p class="right-align">
+                                <button type="submit" class="waves-effect waves-light btn" onclick="$('#tipo_submit').val(0)">
+                                    <i class="material-icons right">input</i>Entrar
+                                </button>
+                            </p>
+                        </form>
+                    </div>
+
+{#                    {% url 'password_user_reset' as password_reset %}#}
+                    <div class="card-reveal" {% if msg_reset or form_reset.non_field_errors or form_reset.cpf.errors or form_reset.email.errors%}style="display: block;transform: translateY(-100%);"{% endif %}>
+                        <span class="card-title grey-text text-darken-4">Recuperar a senha<i class="material-icons right">close</i></span>
+                        <p>Esqueceu sua senha? Digite seu CPF e endereço de e-mail abaixo , e vamos enviar instruções para configurar uma nova.</p>
+
+                        {% if msg_reset %}
+                            <div class="card-panel red lighten-2 white-text">
+                                <span>{{ msg_reset|safe }}</span>
+                            </div>
+                        {% endif %}
+
+                        {% if form_reset.non_field_errors %}
+                            <div class="card-panel red lighten-2 white-text">
+                                {% for error in form_reset.non_field_errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <form action="." method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="submit_reset" value="True"/>
+                            <div class="row">
+                                <div class="input-field col s12">
+                                    <i class="material-icons prefix">person</i>
+                                    {{ form_reset.cpf }}
+                                    <label for="id_cpf">CPF</label>
+                                    {% if form_reset.cpf.errors %}
+                                        <span class="red-text">{{ form_reset.cpf.errors }}</span>
+                                    {% endif %}
+                                </div>
+
+                                <div class="input-field col s12">
+                                    <i class="material-icons prefix">email</i>
+                                    {{ form_reset.email }}
+                                    <label for="id_email">E-mail</label>
+                                    {% if form_reset.email.errors %}
+                                        <span class="red-text">{{ form_reset.email.errors }}</span>
+                                    {% endif %}
+                                </div>
+                                <div class="input-field col s12">
+                                    <button type="submit" value="Enviar" class="waves-effect waves-light btn right">
+                                        <i class="material-icons right">send</i>Enviar
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="card-action">
+                        <a href="#" class="activator">Esqueceu sua senha?</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+{% endblock %}
+{% block extra_js %}
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('#id_username').focus().trigger();
+        })
+    </script>
+{% endblock %}

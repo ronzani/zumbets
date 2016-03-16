@@ -13,7 +13,7 @@ class Pedido(models.Model):
     status = models.CharField(verbose_name='Status', max_length=1, choices=CHOICE_STATUS_PEDIDO, default='1')
 
     def __unicode__(self):
-        return '%s' %self.distribuidor
+        return '%s' % self.distribuidor
 
     class Meta:
         verbose_name = 'Pedido'

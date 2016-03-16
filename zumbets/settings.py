@@ -127,6 +127,13 @@ STATIC_ROOT = os.path.join(LOCAL, 'static')
 
 MEDIA_ROOT = os.path.join(LOCAL, 'media')
 
+EMAIL_BACKEND = 'django_smtp_ssl.SSLEmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_PASSWORD = 'pedroca2811'
+EMAIL_HOST_USER = 'ronzani.robson@gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
 try:
     from settings_local import *
 except:

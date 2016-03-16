@@ -7,19 +7,20 @@ from distribuidor.models import *
 
 class PessoaAdmin(admin.ModelAdmin):
     model = Pessoa
-    # form = PessoaForm
+    form = PessoaForm
+    list_display = ['username', '__unicode__', 'telefone1', 'email']
     fieldsets = [
                     ('Dados Pessoais', {'fields': (
                         ('first_name', 'last_name'),
                         ('email', 'sexo'),
                         ('data_nascimento', 'cpf'),
                         ('rg', 'orgao_emissor'),
+                        ('telefone1', 'telefone2'),
                         ('estado', 'cidade'),
                         ('endereco', 'cep'),
                     )}),
 
                     ('Dados de Usuario', {'fields': (
-                        ('username', 'password'),
                         ('is_active', 'is_staff'),
                     )}),
                 ]
