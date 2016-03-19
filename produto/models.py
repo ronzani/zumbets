@@ -1,6 +1,7 @@
 # coding=utf-8
 from django.db import models
-
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 CHOICES_MODELO = (('b', 'Babylook'),
                   ('n', 'Normal'),
@@ -11,18 +12,26 @@ class Camiseta(models.Model):
     tamanho = models.ForeignKey('produto.Tamanho', verbose_name='Tamanho')
     modelo = models.CharField(max_length=1, verbose_name='Modelo', choices=CHOICES_MODELO)
     cor = models.ForeignKey('produto.CorCamiseta', verbose_name='Cor')
-    quantidade = models.PositiveIntegerField(verbose_name='Quantidade')
-    quantidade_reservada = models.PositiveIntegerField(verbose_name='Quantidade Reservada')
 
     def __unicode__(self):
         return '%s - %s - %s' % (self.modelo, self.tamanho, self.cor)
+
+    class Meta:
+        verbose_name = 'Camiseta'
+        verbose_name_plural = 'Camisetas'
+
+
+class Estoque(models.Model):
+    camiseta = models.ForeignKey('produto.Camiseta', verbose_name='Camiseta')
+    quantidade = models.PositiveIntegerField(verbose_name='Quantidade')
+    quantidade_reservada = models.PositiveIntegerField(verbose_name='Quantidade Reservada')
 
     def get_quantidade_disponivel(self):
         return self.quantidade - self.quantidade_reservada
 
     class Meta:
-        verbose_name = 'Camiseta'
-        verbose_name_plural = 'Camisetas'
+        verbose_name = 'Estoque'
+        verbose_name_plural = 'Estoque'
 
 
 class Referencia(models.Model):
@@ -77,12 +86,24 @@ class CorCamiseta(models.Model):
 
 
 class Entrada(models.Model):
+    camiseta = models.ForeignKey('produto.Camiseta', verbose_name='Camiseta')
     quantidade = models.PositiveIntegerField(verbose_name='Quantidade')
-    produto = models.CharField(max_length=10, verbose_name='Produto')
 
     def __unicode__(self):
-        return '%s - %d' % (self.produto, self.quantidade)
+        return '%s - %d' % (self.camiseta, self.quantidade)
 
     class Meta:
         verbose_name = 'Entrada'
         verbose_name_plural = 'Entradas'
+
+
+@receiver(post_save, sender=Entrada)
+def signal_atualiza_estoque(sender, instance, **kwargs):
+    try:
+        camiseta = Estoque.objects.filter(camiseta=instance.camiseta).first()
+        if not camiseta:
+            camiseta = Estoque.objects.create(camiseta=instance.camiseta, quantidade=0, quantidade_reservada=0)
+        camiseta.quantidade = camiseta.quantidade + instance.quantidade
+        camiseta.save()
+    except Exception, e:
+        raise
