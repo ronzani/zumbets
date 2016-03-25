@@ -9,6 +9,7 @@ urlpatterns = [
     url(r'^$', 'appconfig.views.index', name='index'),
     url(r'', include(frontend_urls)),
     url(r'', include('distribuidor.urls')),
+    url(r'', include('vendas.urls')),
 
     # url(r'^media/(?<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT,}),
 ]

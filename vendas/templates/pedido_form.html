@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{%block extrastyle %}
+    <style type="text/css">
+
+        .add-row {
+        padding-left:18px;
+        background:url( {% static "appconfig/img/add.png" %} ) no-repeat left center;
+        }
+
+        .delete-row {
+        display:block;
+        margin:6px 0 0 0;
+        padding-left:18px;
+        background:url( {% static "appconfig/img/delete.png" %} ) no-repeat left center;
+       }
+
+       .dynamic-form {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 2px dotted #ccc;
+        }
+    </style>
+
+{% endblock %}
+
+{% block content %}
+
+    <h3>{{ titulo }}</h3>
+
+    {% if erro %}
+        <div class="card-panel red lighten-1 white-text" style="text-align: justify">
+            {% for err in erro %}
+                {{ err|safe }}<br>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="row">
+        {% if form.non_field_errors %}
+            <div class="card-panel red lighten-1 white-text col s12" style="text-align: justify">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="row">
+        <form method="post">
+            {% csrf_token %}
+
+            <fieldset class="z-depth-2">
+                {% for field in form %}
+                    <div class="input-field col s12 m12 l6">
+                        {{ field }}
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {% for err in field.errors %}
+                            <span class="red-text">{{ err }}</span>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            </fieldset>
+
+            <br>
+
+            <h4 class="header light">Itens do Pedido</h4>
+
+            <div class="card-panel grey lighten-5 z-depth-3">
+                <table>
+                    {{ formset.management_form }}
+                    <thead>
+                        <tr>
+                            {% for item in formset %}
+                                {% if forloop.first %}
+                                    {% for field in item %}
+                                        {% if not field.is_hidden %}
+                                            <th>{{ field.label }}</th>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in formset %}
+                            {% if item.non_field_errors %}
+                                <div class="add-row">
+                                    <div class="card-panel red lighten-1 white-text col s12" style="text-align: justify; margin-bottom: 0px; margin-top: 0px">
+                                        <span>{{ item.non_field_errors }}</span>
+                                    </div>
+                                </div>
+                            {% endif %}
+                            <tr class="item-formset dynamic-form">
+                                {% for field in item %}
+                                    {% if field.is_hidden %}
+                                        {{ field }}
+                                    {% else %}
+                                        <td>
+                                            {{ field}}
+                                            {% if field.errors %}
+                                                <div class="red-text" >
+                                                    <span>{{ field.errors }}</span>
+                                                </div>
+                                            {% endif %}
+                                         </td>
+                                    {% endif %}
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <br>
+            <div class="fixed-action-btn" style="bottom: 4%; right: 8%;">
+                <button class="btn-floating btn-large waves-effect waves-light z-depth-2 tooltipped" data-position="left" data-delay="50" data-tooltip="Salvar" type="submit">
+                  <i class="large material-icons">save</i>
+                </button>
+            </div>
+        </form>
+
+        <div class="col s1 fixed-action-btn " style="bottom: 4%; left: 8%;">
+            <a href="{% url 'pedidos_list' %}" class="tooltipped" data-position="left" data-delay="10" data-tooltip="Voltar">
+                <button class="btn-floating btn-large  waves-effect waves-light z-depth-2"><i class="material-icons">keyboard_arrow_left</i></button>
+            </a>
+        </div>
+    </div>
+
+{% endblock %}
+{% block extra_js %}
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('select').material_select();
+          });
+    </script>
+
+    <script type="text/javascript" src="{% static "appconfig/js/jquery.formset.js" %}"></script>
+
+    <script type="text/javascript">
+        $(function () {
+         $('.item-formset').formset({
+             prefix: "{{ formset.prefix }}",
+             addText:"Adicionar outro",
+             deleteText:"Remover"
+            });
+        });
+    </script>
+
+{#    <script type="text/javascript">#}
+{#        function solicitacao_tooltipped() {#}
+{#            Materialize.toast('Ao marcar esta agenda como ativa, desativará outras agendas ativas!', 5000);#}
+{#        }#}
+{#    </script>#}
+
+{% endblock %}
+
