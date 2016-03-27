@@ -1,5 +1,75 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>Sou LINDO!</h1>
-{% endblock %}
+    <div class="row">
+        <h3> <i class="medium material-icons">today</i>Meus Pedidos</h3>
+
+{#        <nav class="light-blue lighten-1 z-depth-2">#}
+{#            <div class="nav-wrapper">#}
+{#                <form action="." method="get">#}
+{#                    <div class="input-field">#}
+{#                        <input id="search_box" type="search" name="search_box" required placeholder="Pesquise">#}
+{#                        <label for="search"><i class="material-icons">search</i></label>#}
+{#                        <i class="material-icons">close</i>#}
+{#                    </div>#}
+{#                </form>#}
+{#            </div>#}
+{#        </nav>#}
+
+{#        <div class="col s12" style="text-align: right; margin: 10px -10px;">#}
+{#            Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}#}
+{#            | Nº de Agendas <strong>{{ page_obj.paginator.count }}</strong>.#}
+{#        </div>#}
+
+        <fieldset class="z-depth-5">
+            <table class="striped">
+                <thead>
+                    <tr>
+                        <th>Distribuidor</th>
+                        <th>frete</th>
+                        <th>status</th>
+{#                        <th>Fim Periodo</th>#}
+{#                        <th>Ativa</th>#}
+                        <th>Ação</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for pedido in pedido_list %}
+                        <tr>
+                            <td>{{ pedido.distribuidor.get_full_name }}</td>
+                            <td>{{ pedido.frete }}</td>
+                            <td>{{ pedido.get_status_display }}</td>
+                            <td>
+{#                                <a href="#modal_dajax" class="modal-trigger" onclick="pessoa_carregar_modal({{ pessoa.id }})"><i class="material-icons">comment</i></a>#}
+                                <a href="{{ pedido.id }}"><i class="material-icons">mode_edit</i></a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </fieldset>
+    </div>
+
+    {# Modal com Dajax #}
+{#    <td>#}
+{#        <div id="modal_dajax" class="modal modal-fixed-footer">#}
+{#            <div id="modal_dajax_html" class="modal-content">#}
+{##}
+{#            </div>#}
+{#            <div class="modal-footer">#}
+{#              <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Fechar</a>#}
+{#            </div>#}
+{#        </div>#}
+{#    </td>#}
+
+{#    {% include "paginacao.html" %}#}
+
+    {# Botão Flutuante #}
+    <div class="fixed-action-btn" style="bottom: 4%; right: 8%;">
+        <a href="add">
+            <button class="btn-floating btn-large green  z-depth-1 tooltipped" data-position="left" data-delay="50" data-tooltip="Adicionar">
+              <i class="large material-icons">add</i>
+            </button>
+        </a>
+    </div>{% endblock %}
