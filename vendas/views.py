@@ -60,11 +60,11 @@ def pedido_add(request):
         form = PedidoForm
         formset = itens_pedidoInlineFormSet
     return render(request, 'pedido_form.html', {
-        'form': form,
-        'formset': formset,
-        'titulo': 'Pedido de Venda',
-        'erro': msg
-    })
+                                                'form': form,
+                                                'formset': formset,
+                                                'titulo': 'Pedido de Venda',
+                                                'erro': msg
+                                            })
 
 
 def pedidos_up(request, pk):

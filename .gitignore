@@ -1,2 +1,7 @@
 db.sqlite3
 zumbets/settings_local.py
+*.pyc
+.idea/
+zumbets/appconfig/static/
+*.sqlite3
+venv_zumbets/

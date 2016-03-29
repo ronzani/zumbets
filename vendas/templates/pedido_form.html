@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{%block extrastyle %}
+{%block extra_style %}
     <style type="text/css">
 
         .add-row {
@@ -128,12 +128,6 @@
 
 {% endblock %}
 {% block extra_js %}
-
-    <script type="text/javascript">
-        $(document).ready(function() {
-            $('select').material_select();
-          });
-    </script>
 
     <script type="text/javascript" src="{% static "appconfig/js/jquery.formset.js" %}"></script>
 
