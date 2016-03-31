@@ -25,9 +25,12 @@ class PedidoForm(forms.ModelForm):
 
 class ItensPedidoForm(forms.ModelForm):
 
+    # referencia = forms.ModelChoiceField(widget=forms.Select(attrs={'class': 'browser-default', }), required=True)
+
     class Meta:
         model = ItensPedido
-        fields = '__all__'
+        # fields = '__all__'
+        exclude = ['cliente', 'cpf_cliente', 'email_cliente', 'endereco_cliente']
         # widgets = {'data': forms.TextInput(attrs={'class': 'datepicker'}),}
 
     # def clean(self):
