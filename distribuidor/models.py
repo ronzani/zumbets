@@ -7,6 +7,35 @@ CHOICES_SEXO = (('m', 'Masculino'),
                 ('f', 'Feminino'),
                 )
 
+CHOICES_UNIDADE_FEDERATIVA = (
+    ('AC', 'Acre'),
+    ('AL', 'Alagoas'),
+    ('AM', 'Amazonas'),
+    ('AP', 'Amapá'),
+    ('BA', 'Bahia'),
+    ('CE', 'Ceará'),
+    ('DF', 'Distrito Federal'),
+    ('ES', 'Espírito Santo'),
+    ('GO', 'Goiás'),
+    ('MA', 'Maranhão'),
+    ('MT', 'Mato Grosso'),
+    ('MS', 'Mato Grosso do Sul'),
+    ('MG', 'Minas Gerais'),
+    ('PA', 'Pará'),
+    ('PB', 'Paraiba'),
+    ('PR', 'Paraná'),
+    ('PE', 'Pernambuco'),
+    ('PI', 'Piauí'),
+    ('RJ', 'Rio de Janeiro'),
+    ('RN', 'Rio Grande do Norte'),
+    ('RS', 'Rio Grande do Sul'),
+    ('RO', 'Rondônia'),
+    ('RR', 'Roraima'),
+    ('SC', 'Santa Catarina'),
+    ('SP', 'São Paulo'),
+    ('SE', 'Sergige'),
+    ('TO', 'Tocantins'),
+)
 
 class Pessoa(User):
     cpf = models.CharField(max_length=11, verbose_name='CPF', unique=True)
@@ -14,7 +43,7 @@ class Pessoa(User):
     sexo = models.CharField(max_length=1, verbose_name='Sexo', choices=CHOICES_SEXO)
     rg = models.CharField(max_length=30, verbose_name='RG')
     orgao_emissor = models.CharField(max_length=30, verbose_name='Orgão Emissor')
-    estado = models.CharField(max_length=100, verbose_name='Estado')
+    estado = models.CharField(max_length=2, verbose_name='Estado', choices=CHOICES_UNIDADE_FEDERATIVA)
     cidade = models.CharField(max_length=100, verbose_name='Cidade')
     cep = models.PositiveIntegerField(verbose_name='CEP')
     endereco = models.CharField(max_length=100, verbose_name='Endereço')
