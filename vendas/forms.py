@@ -29,8 +29,8 @@ class ItensPedidoForm(forms.ModelForm):
 
     class Meta:
         model = ItensPedido
-        # fields = '__all__'
-        exclude = ['cliente', 'cpf_cliente', 'email_cliente', 'endereco_cliente']
+        fields = '__all__'
+        # exclude = ['cliente', 'cpf_cliente', 'email_cliente', 'endereco_cliente']
         # widgets = {'data': forms.TextInput(attrs={'class': 'datepicker'}),}
 
     # def clean(self):
