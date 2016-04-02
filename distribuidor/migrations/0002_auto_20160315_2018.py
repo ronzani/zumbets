@@ -14,18 +14,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='pessoa',
             name='telefone1',
-            field=models.CharField(default='', max_length=16, verbose_name=b'Telefone1'),
+            field=models.CharField(default='123456', max_length=16, verbose_name=b'Telefone1'),
             preserve_default=False,
         ),
         migrations.AddField(
             model_name='pessoa',
             name='telefone2',
             field=models.CharField(max_length=16, null=True, verbose_name=b'Telefone2', blank=True),
-        ),
-        migrations.AlterField(
-            model_name='pessoa',
-            name='cpf',
-            field=models.CharField(unique=True, max_length=11, verbose_name=b'CPF'),
         ),
         migrations.AlterField(
             model_name='pessoa',

@@ -38,7 +38,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='entrada',
             name='camiseta',
-            field=models.ForeignKey(default='', verbose_name=b'Camiseta', to='produto.Camiseta'),
+            field=models.ForeignKey(default=1, verbose_name=b'Camiseta', to='produto.Camiseta'),
             preserve_default=False,
         ),
         migrations.AddField(

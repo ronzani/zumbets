@@ -11,6 +11,7 @@ class Pedido(models.Model):
     distribuidor = models.ForeignKey('distribuidor.Pessoa', verbose_name='Distribuidor')
     frete = models.FloatField(verbose_name='Frete', default=0)
     status = models.CharField(verbose_name='Status', max_length=1, choices=CHOICE_STATUS_PEDIDO, default='1')
+    data = models.DateTimeField(verbose_name='Data do Pedido', auto_now=True, null=True)
 
     def __unicode__(self):
         return '%s' % self.distribuidor

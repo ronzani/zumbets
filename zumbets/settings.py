@@ -44,7 +44,8 @@ INSTALLED_APPS = (
     'appconfig',
     'produto',
     'vendas',
-    'distribuidor'
+    'distribuidor',
+    'comissao',
 )
 
 MIDDLEWARE_CLASSES = (
