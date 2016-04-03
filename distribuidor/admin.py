@@ -23,7 +23,11 @@ class PessoaAdmin(admin.ModelAdmin):
                     ('Dados de Usuario', {'fields': (
                         ('is_active', 'is_staff'),
                     )}),
-                ]
+
+                    ('Dados de Comissao', {'fields': (
+                        ('nivel'),
+                    )}),
+                            ]
 
 
 admin.site.register(Pessoa, PessoaAdmin)

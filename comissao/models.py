@@ -17,7 +17,7 @@ class Classe(models.Model):
         verbose_name_plural = 'Classes'
 
     def __unicode__(self):
-        return self.numero
+        return '%s' %self.numero
 
 
 class Nivel(models.Model):
