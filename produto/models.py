@@ -4,7 +4,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 CHOICES_MODELO = (('b', 'Babylook'),
-                  ('n', 'Norma'),
+                  ('n', 'Normal'),
                   )
 
 
@@ -90,7 +90,7 @@ class Entrada(models.Model):
     quantidade = models.PositiveIntegerField(verbose_name='Quantidade')
 
     def __unicode__(self):
-        return '%s - %d' % (self.camiseta, self.quantidade)
+        return '%s - %d' %(self.camiseta, self.quantidade)
 
     class Meta:
         verbose_name = 'Entrada'

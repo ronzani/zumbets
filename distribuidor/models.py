@@ -49,7 +49,7 @@ class Pessoa(User):
     endereco = models.CharField(max_length=100, verbose_name='Endereço')
     telefone1 = models.CharField(max_length=16, verbose_name='Telefone1')
     telefone2 = models.CharField(max_length=16, verbose_name='Telefone2', blank=True, null=True)
-    # nivel = models.ForeignKey('comissao.Nivel', verbose_name='Nivel')
+    nivel = models.ForeignKey('comissao.Nivel', verbose_name='Nivel')
 
     def __unicode__(self):
         return '%s' % self.get_full_name()

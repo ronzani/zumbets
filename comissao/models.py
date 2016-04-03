@@ -51,3 +51,9 @@ class Comissao(models.Model):
     def __unicode__(self):
         return self.comissao
 
+
+class Bonus(models.Model):
+    classe = models.ForeignKey('comissao.Classe', verbose_name='Classe', related_name='comisao_bonus_classe')
+    pedido = models.ForeignKey('vendas.Pedido',verbose_name='Pedido')
+    comissao = models.PositiveIntegerField(verbose_name='Comissão')
+

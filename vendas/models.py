@@ -1,5 +1,10 @@
 # coding=utf-8
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+from comissao.models import Comissao
+from produto.models import Estoque
 
 
 class Pedido(models.Model):
@@ -26,7 +31,38 @@ class Pedido(models.Model):
             for item in self.itenspedido_set.all():
                 valor += item.preco * item.quantidade
 
-        return valor+self.frete
+        return valor + self.frete
+
+
+@receiver(post_save, sender=Pedido)
+def signal_post_save_pedido(sender, instance, **kwargs):
+    if instance.status == 1:  # Pedido aberto
+        if instance.itenspedido_set.exists():
+            for item in instance.itenspedido_set.all():
+                # Atualiza a quantidade reservado dao estoque
+                camiseta = Estoque.objects.filter(camiseta=item.camiseta).first()
+                if camiseta:
+                    camiseta.quantidade_reservada = camiseta.quantidade_reservada + item.quantidade
+                    camiseta.save()
+                else:
+                    pass  # Tem que tratar o erro de alguma forma
+
+    elif instance.status == 3:  # Pedido concluido
+        if instance.itenspedido_set.exists():
+            for item in instance.itenspedido_set.all():
+                # Da baixa no estoque
+                camiseta = Estoque.objects.filter(camiseta=item.camiseta).first()
+                if camiseta:
+                    camiseta.quantidade_reservada = camiseta.quantidade_reservada - item.quantidade
+                    camiseta.quantidade = camiseta.quantidade - item.quantidade
+                    camiseta.save()
+                else:
+                    pass  # Tem que tratar o erro de alguma forma
+
+        #Calcula a comissão do distribuidor
+        percent_comissao = instance.distribuidor.nivel.comissao/100
+        comissao = instance.get_preco_pedido * percent_comissao
+        Comissao.objects.create(pessoa=instance.distribuidor, pedido=instance, comissao=comissao, exp=0)
 
 
 class ItensPedido(models.Model):
@@ -34,7 +70,7 @@ class ItensPedido(models.Model):
     referencia = models.ForeignKey('produto.Referencia', verbose_name='Referência')
     camiseta = models.ForeignKey('produto.Camiseta', verbose_name='Camiseta')
     quantidade = models.PositiveIntegerField(verbose_name='Quantidade')
-    preco_total = models.FloatField(verbose_name='Preço')
+    preco = models.FloatField(verbose_name='Preço')
     cliente = models.CharField(max_length=100, verbose_name='Cliente')
     cpf_cliente = models.CharField(max_length=11, verbose_name='CPF')
     email_cliente = models.CharField(max_length=100, verbose_name='E-mail')
@@ -49,3 +85,6 @@ class ItensPedido(models.Model):
 
     def get_preco(self):
         return self.camiseta.preco
+
+    def get_preco_total_item(self):
+        return self.quantidade * self.get_preco()
