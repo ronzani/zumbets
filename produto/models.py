@@ -14,7 +14,7 @@ class Camiseta(models.Model):
     cor = models.ForeignKey('produto.CorCamiseta', verbose_name='Cor')
 
     def __unicode__(self):
-        return '%s - %s - %s' % (self.modelo, self.tamanho, self.cor)
+        return '%s - %s - %s' % (self.get_modelo_display(), self.tamanho, self.cor)
 
     class Meta:
         verbose_name = 'Camiseta'
