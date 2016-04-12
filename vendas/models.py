@@ -77,7 +77,7 @@ class ItensPedido(models.Model):
     endereco_cliente = models.CharField(max_length=100, verbose_name='Endereço')
 
     def __unicode__(self):
-        return self.distribuidor
+        return '%s' % self.referencia
 
     class Meta:
         verbose_name = 'Itens no Pedido'
