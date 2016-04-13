@@ -31,12 +31,12 @@ class Pedido(models.Model):
             for item in self.itenspedido_set.all():
                 valor += item.preco * item.quantidade
 
-        return valor + self.frete
+        return valor
 
 
 @receiver(post_save, sender=Pedido)
 def signal_post_save_pedido(sender, instance, **kwargs):
-    if instance.status == 1:  # Pedido aberto
+    if instance.status == '1':  # Pedido aberto
         if instance.itenspedido_set.exists():
             for item in instance.itenspedido_set.all():
                 # Atualiza a quantidade reservado dao estoque
@@ -47,7 +47,7 @@ def signal_post_save_pedido(sender, instance, **kwargs):
                 else:
                     pass  # Tem que tratar o erro de alguma forma
 
-    elif instance.status == 3:  # Pedido concluido
+    elif instance.status == '3':  # Pedido concluido
         if instance.itenspedido_set.exists():
             for item in instance.itenspedido_set.all():
                 # Da baixa no estoque
@@ -60,8 +60,8 @@ def signal_post_save_pedido(sender, instance, **kwargs):
                     pass  # Tem que tratar o erro de alguma forma
 
         #Calcula a comissão do distribuidor
-        percent_comissao = instance.distribuidor.nivel.comissao/100
-        comissao = instance.get_preco_pedido * percent_comissao
+        percent_comissao = float(instance.distribuidor.nivel.comissao)/100
+        comissao = instance.get_preco_pedido() * percent_comissao
         Comissao.objects.create(pessoa=instance.distribuidor, pedido=instance, comissao=comissao, exp=0)
 
 

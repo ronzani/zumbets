@@ -39,7 +39,7 @@ class Nivel(models.Model):
 class Comissao(models.Model):
     pessoa = models.ForeignKey('distribuidor.Pessoa', verbose_name='Pessoa')
     pedido = models.ForeignKey('vendas.Pedido', verbose_name='Pedido')
-    comissao = models.PositiveIntegerField(verbose_name='Comissão')
+    comissao = models.FloatField(verbose_name='Comissão')
     exp = models.PositiveIntegerField(verbose_name='Experiência')
     data = models.DateTimeField(verbose_name='Data', auto_now=True)
 
