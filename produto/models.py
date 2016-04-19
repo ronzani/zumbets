@@ -90,7 +90,7 @@ class Entrada(models.Model):
     quantidade = models.PositiveIntegerField(verbose_name='Quantidade')
 
     def __unicode__(self):
-        return '%s - %d' %(self.camiseta, self.quantidade)
+        return '%s - %d' % (self.camiseta, self.quantidade)
 
     class Meta:
         verbose_name = 'Entrada'
@@ -107,3 +107,17 @@ def signal_atualiza_estoque(sender, instance, **kwargs):
         camiseta.save()
     except Exception, e:
         raise
+
+
+class SaidaManual(models.Model):
+    camiseta = models.ForeignKey('produto.Camiseta', verbose_name='Camiseta')
+    quantidade = models.PositiveIntegerField(verbose_name='Quantidade')
+    usuario = models.ForeignKey('auth.User', verbose_name=u'Usuário')
+    justificativa = models.TextField(verbose_name='Justificativa', max_length=500)
+
+    def __unicode__(self):
+        return '%s - %d' % (self.camiseta, self.quantidade)
+
+    class Meta:
+        verbose_name = 'Saida'
+        verbose_name_plural = 'Saidas'

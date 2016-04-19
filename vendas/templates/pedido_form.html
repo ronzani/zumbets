@@ -54,9 +54,9 @@
                     <div class="input-field col s12 m12 l6">
                         {{ field }}
                         <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                        {% for err in field.errors %}
-                            <span class="red-text">{{ err }}</span>
-                        {% endfor %}
+                        {% if field.errors %}
+                            <span class="red-text">{{ field.errors }}</span>
+                        {% endif %}
                     </div>
                 {% endfor %}
             </fieldset>

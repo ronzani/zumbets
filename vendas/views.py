@@ -89,7 +89,7 @@ def pedidos_up(request, pk):
     else:
         form = PedidoForm(instance=pedido)
         formset = itens_pedidoInlineFormSet(instance=pedido)
-    return render(request, '', {
+    return render(request, 'pedido_form.html', {
         'form': form,
         'formset': formset,
         'titulo': 'Editar Pedido de Venda',
