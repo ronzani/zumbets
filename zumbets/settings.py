@@ -94,7 +94,7 @@ WSGI_APPLICATION = 'zumbets.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'zumbeats',
+        'NAME': 'zumbeatsII',
         'USER': 'postgres',
         'PASSWORD': 'amiguinho',
         'HOST': '127.0.0.1',
