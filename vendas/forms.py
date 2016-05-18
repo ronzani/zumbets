@@ -47,19 +47,6 @@ class ItensPedidoForm(forms.ModelForm):
         exclude = ['cliente', 'cpf_cliente', 'email_cliente', 'endereco_cliente']
         # widgets = {'data': forms.TextInput(attrs={'class': 'datepicker'}),}
 
-    def clean(self):
-        cleaned_data = super(ItensPedidoForm, self).clean()
-        camiseta = cleaned_data.get('camiseta')
-        if not cleaned_data['DELETE']:
-            estoque = Estoque.objects.filter(camiseta=camiseta).first()
-            if estoque:
-                if cleaned_data.get('quantidade') > estoque.get_quantidade_disponivel():
-                    self._errors['quantidade'] = u'Quantidade indisponível em Estoque'
-                    raise forms.ValidationError(u'Não há quantidade suficiente em estoque da camiseta %s' % camiseta)
-            else:
-                self._errors['camiseta'] = u'Não há entrada de estoque para esta camiseta.'
-                raise forms.ValidationError(u'Não há entrada de estoque para a camiseta %s' %camiseta)
-        return cleaned_data
 
 
 # class HospitalRegistrationForm(forms.Form):

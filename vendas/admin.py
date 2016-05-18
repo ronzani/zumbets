@@ -13,6 +13,7 @@ class PedidoAdmin(admin.ModelAdmin):
     model = Pedido
     form = PedidoForm
     inlines = [ItensPedidoInlineAdmin]
+    list_display = ['distribuidor', 'status', 'get_preco_pedido']
 
 
 admin.site.register(Pedido, PedidoAdmin)

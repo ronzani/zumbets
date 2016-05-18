@@ -8,7 +8,7 @@ from distribuidor.models import *
 class PessoaAdmin(admin.ModelAdmin):
     model = Pessoa
     form = PessoaForm
-    list_display = ['username', '__unicode__', 'telefone1', 'email']
+    list_display = ['username', '__unicode__', 'exp', 'calcula_comissao', 'telefone1', 'email']
     fieldsets = [
                     ('Dados Pessoais', {'fields': (
                         ('first_name', 'last_name'),
@@ -18,6 +18,7 @@ class PessoaAdmin(admin.ModelAdmin):
                         ('telefone1', 'telefone2'),
                         ('estado', 'cidade'),
                         ('endereco', 'cep'),
+                        ('recrutador'),
                     )}),
 
                     ('Dados de Usuario', {'fields': (
@@ -25,7 +26,7 @@ class PessoaAdmin(admin.ModelAdmin):
                     )}),
 
                     ('Dados de Comissao', {'fields': (
-                        ('nivel'),
+                        ('exp', 'classe'),
                     )}),
                             ]
 

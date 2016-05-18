@@ -37,28 +37,9 @@ class Pedido(models.Model):
 @receiver(post_save, sender=Pedido)
 def signal_post_save_pedido(sender, instance, **kwargs):
     if instance.status == '3':  # Pedido concluido
-        if instance.itenspedido_set.exists():
-            for item in instance.itenspedido_set.all():
-                # Da baixa no estoque
-                estoque = Estoque.objects.filter(camiseta=item.camiseta).first()
-                if estoque:
-                    estoque.quantidade_reservada = estoque.quantidade_reservada - item.quantidade
-                    estoque.quantidade = estoque.quantidade - item.quantidade
-                    estoque.save()
-
-        #Calcula a comissão do distribuidor
-        percent_comissao = float(instance.distribuidor.nivel.comissao)/100
-        comissao = instance.get_preco_pedido() * percent_comissao
-        Comissao.objects.create(pessoa=instance.distribuidor, pedido=instance, comissao=comissao, exp=0)
-    elif instance.status == '4':  # Pedido Cancelado
-        if instance.itenspedido_set.exists():
-            for item in instance.itenspedido_set.all():
-                # Devolve iten para o estoque
-                estoque = Estoque.objects.filter(camiseta=item.camiseta).first()
-                if estoque:
-                    estoque.quantidade_reservada = estoque.quantidade_reservada - item.quantidade
-                    estoque.save()
-
+        exp = int(instance.get_preco_pedido())
+        if exp > 0:
+            instance.distribuidor.set_exp(exp)
 
 class ItensPedido(models.Model):
     pedido = models.ForeignKey('vendas.Pedido', verbose_name='Pedido')
@@ -85,11 +66,11 @@ class ItensPedido(models.Model):
         return self.quantidade * self.get_preco()
 
 
-@receiver(post_save, sender=ItensPedido)
-def signal_post_save_itens_pedido(sender, instance, **kwargs):
-    if instance.pedido.status == '1':  # Pedido aberto
-        # Atualiza a quantidade reservada do estoque
-        estoque = Estoque.objects.filter(camiseta=instance.camiseta).first()
-        if estoque:
-            estoque.quantidade_reservada = estoque.quantidade_reservada + instance.quantidade
-            estoque.save()
+# @receiver(post_save, sender=ItensPedido)
+# def signal_post_save_itens_pedido(sender, instance, **kwargs):
+#     if instance.pedido.status == '1':  # Pedido aberto
+#         # Atualiza a quantidade reservada do estoque
+#         estoque = Estoque.objects.filter(camiseta=instance.camiseta).first()
+#         if estoque:
+#             estoque.quantidade_reservada = estoque.quantidade_reservada + instance.quantidade
+#             estoque.save()

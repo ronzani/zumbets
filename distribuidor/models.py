@@ -2,6 +2,9 @@
 from django.contrib.auth.models import User
 from django.db import models
 
+from comissao.models import Nivel
+from vendas.models import Pedido
+
 
 CHOICES_SEXO = (('m', 'Masculino'),
                 ('f', 'Feminino'),
@@ -49,7 +52,10 @@ class Pessoa(User):
     endereco = models.CharField(max_length=100, verbose_name='Endereço')
     telefone1 = models.CharField(max_length=16, verbose_name='Telefone1')
     telefone2 = models.CharField(max_length=16, verbose_name='Telefone2', blank=True, null=True)
-    nivel = models.ForeignKey('comissao.Nivel', verbose_name='Nivel')
+    # nivel = models.ForeignKey('comissao.Nivel', verbose_name='Nivel')
+    classe = models.ForeignKey('comissao.Classe', verbose_name='Classe')
+    recrutador = models.ForeignKey('distribuidor.Pessoa', verbose_name='Recrutador', null=True, blank=True)
+    exp = models.BigIntegerField(verbose_name='Experiência')
 
     def __unicode__(self):
         return '%s' % self.get_full_name()
@@ -57,6 +63,24 @@ class Pessoa(User):
     class Meta:
         verbose_name = 'Pessoa'
         verbose_name_plural = 'Pessoas'
+
+    def set_exp(self, exp):
+        self.exp = self.exp + exp
+        self.save()
+
+    def calcula_comissao(self):
+
+        vendas = Pedido.objects.filter(distribuidor=self.id, status=3)
+        vendas_diretas = 0
+
+        for venda in vendas:
+            vendas_diretas += venda.get_preco_pedido()
+
+        per_comissao_direta = Nivel.objects.filter(classe=self.classe, exp_minima__lte=vendas_diretas).order_by('-exp_minima').first().comissao
+
+        comissao_venda_direta = float(vendas_diretas*per_comissao_direta/100)
+
+        return comissao_venda_direta
 
 
 def validate_cpf(cpf):
