@@ -38,27 +38,21 @@ def pedido_add(request):
 
     itens_pedidoInlineFormSet = inlineformset_factory(Pedido, ItensPedido,
                                                       ItensPedidoForm, can_delete=True, extra=0, min_num=1)
+    form = PedidoForm(request.POST or None)
+    formset = itens_pedidoInlineFormSet(request.POST or None)
 
-    if request.method == 'POST':
-        form = PedidoForm(request.POST)
-        formset = itens_pedidoInlineFormSet(request.POST)
-
-        if form.is_valid() and formset.is_valid():
-            try:
-                with transaction.atomic():
-                    pedido = form.save()
-                    for f in formset:
-                        if not f.cleaned_data['DELETE']:
-                            item = f.save(commit=False)
-                            item.pedido = pedido
-                            item.save()
-                    return HttpResponseRedirect('')
-            except Exception, e:
-                msg = e
-
-    else:
-        form = PedidoForm
-        formset = itens_pedidoInlineFormSet
+    if form.is_valid() and formset.is_valid():
+        try:
+            with transaction.atomic():
+                pedido = form.save()
+                for f in formset:
+                    if not f.cleaned_data['DELETE']:
+                        item = f.save(commit=False)
+                        item.pedido = pedido
+                        item.save()
+                return HttpResponseRedirect('')
+        except Exception, e:
+            msg = e
     return render(request, 'pedido_form.html', {
                                                 'form': form,
                                                 'formset': formset,
