@@ -76,7 +76,9 @@ class Pessoa(User):
         for venda in vendas:
             vendas_diretas += venda.get_preco_pedido()
 
-        per_comissao_direta = Nivel.objects.filter(classe=self.classe, exp_minima__lte=vendas_diretas).order_by('-exp_minima').first().comissao
+        per_comissao_direta = Nivel.objects.filter(classe=self.classe,
+                                                   exp_minima__lte=vendas_diretas,
+                                                   exp_maxima__gte=vendas_diretas).first().comissao
 
         comissao_venda_direta = float(vendas_diretas*per_comissao_direta/100)
 
