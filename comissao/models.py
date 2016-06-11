@@ -52,6 +52,17 @@ class Comissao(models.Model):
     def __unicode__(self):
         return self.comissao
 
+class DetalheComissao(models.Model):
+    comissao = models.ForeignKey('comissao.Comissao', verbose_name='Comissão')
+    pedido = models.ForeignKey('vendas.Pedido', verbose_name='Pedido')
+    valor = models.FloatField(verbose_name='Valor')
+    percentual = models.FloatField(verbose_name='Percentual')
+    valor_comissao = models.FloatField(verbose_name='Valor da Comissão')
+    tipo = models.IntegerField(verbose_name='Tipo Comissão')
+
+    class Meta:
+        unique_together = ['pedido', 'tipo']
+
 
 class PeriodoComissao(models.Model):
     mes_ano_referencia = models.DateField(verbose_name='Mes/Ano de Referência')

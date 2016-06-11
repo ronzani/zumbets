@@ -30,7 +30,6 @@ class Pedido(models.Model):
         if self.itenspedido_set.exists():
             for item in self.itenspedido_set.all():
                 valor += item.preco * item.quantidade
-
         return valor
 
 

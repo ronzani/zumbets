@@ -1,8 +1,9 @@
 # coding=utf-8
 from django.contrib.auth.models import User
 from django.db import models
+from django.db import transaction
 
-from comissao.models import Nivel
+from comissao.models import Nivel, Comissao, DetalheComissao
 from vendas.models import Pedido
 
 
@@ -69,20 +70,90 @@ class Pessoa(User):
         self.save()
 
     def calcula_comissao(self):
+        try:
+            #Cacula vendas diretas
+            pedidos_vendas_diretas = Pedido.objects.filter(distribuidor=self.id, status=3)
+            valor_vendas_diretas = 0
 
-        vendas = Pedido.objects.filter(distribuidor=self.id, status=3)
-        vendas_diretas = 0
+            for venda in pedidos_vendas_diretas:
+                valor_vendas_diretas += venda.get_preco_pedido()
 
-        for venda in vendas:
-            vendas_diretas += venda.get_preco_pedido()
+            per_comissao_direta = Nivel.objects.filter(classe=self.classe,
+                                                       exp_minima__lte=valor_vendas_diretas,
+                                                       exp_maxima__gte=valor_vendas_diretas).first().comissao
 
-        per_comissao_direta = Nivel.objects.filter(classe=self.classe,
-                                                   exp_minima__lte=vendas_diretas,
-                                                   exp_maxima__gte=vendas_diretas).first().comissao
+            comissao_venda_direta = float(valor_vendas_diretas*per_comissao_direta/100)
 
-        comissao_venda_direta = float(vendas_diretas*per_comissao_direta/100)
+            with transaction.atomic():
+                comissao = Comissao.objects.create(pessoa=self, comissao=0)
+                comissao.save()
+                for venda in pedidos_vendas_diretas:
+                    detalhe_comissao = DetalheComissao.objects.create(comissao=comissao, pedido=venda,
+                                                                      valor=venda.get_preco_pedido(),
+                                                                      percentual=per_comissao_direta, tipo=1,
+                                                                      valor_comissao=float(venda.get_preco_pedido()*per_comissao_direta/100))
+                    detalhe_comissao.save()
 
-        return comissao_venda_direta
+                # Calcula a comissao dos recrutas do primeiro nivel da arvore
+                pedidos_vendas_recrutas_1 = Pedido.objects.filter(distribuidor__in=Pessoa.objects.filter(recrutador=self.id), status=3)
+                valor_vendas_recrutas_1 = 0
+
+                for venda in pedidos_vendas_recrutas_1:
+                    valor_vendas_recrutas_1 += venda.get_preco_pedido()
+
+                per_comissao_recrutas_1 = 3
+
+                comissao_venda_recrutas_1 = float(valor_vendas_recrutas_1*per_comissao_recrutas_1/100)
+
+                for venda in pedidos_vendas_recrutas_1:
+                    detalhe_comissao = DetalheComissao.objects.create(comissao=comissao, pedido=venda,
+                                                                      valor=venda.get_preco_pedido(),
+                                                                      percentual=per_comissao_recrutas_1, tipo=2,
+                                                                      valor_comissao=float(venda.get_preco_pedido()*per_comissao_recrutas_1/100))
+                    detalhe_comissao.save()
+
+                # Calcula a comissao dos recrutas do segundo nivel da arvore
+                pedidos_vendas_recrutas_2 = Pedido.objects.filter(distribuidor__in=Pessoa.objects.filter(recrutador__in=Pessoa.objects.filter(recrutador=self.id)), status=3)
+                valor_vendas_recrutas_2 = 0
+
+                for venda in pedidos_vendas_recrutas_2:
+                    valor_vendas_recrutas_2 += venda.get_preco_pedido()
+
+                per_comissao_recrutas_2 = 2
+
+                comissao_venda_recrutas_2 = float(valor_vendas_recrutas_2*per_comissao_recrutas_2/100)
+
+                for venda in pedidos_vendas_recrutas_2:
+                    detalhe_comissao = DetalheComissao.objects.create(comissao=comissao, pedido=venda,
+                                                                      valor=venda.get_preco_pedido(),
+                                                                      percentual=per_comissao_recrutas_2, tipo=3,
+                                                                      valor_comissao=float(venda.get_preco_pedido()*per_comissao_recrutas_2/100))
+                    detalhe_comissao.save()
+
+                # Calcula a comissao dos recrutas do Terceiro nivel da arvore
+                pedidos_vendas_recrutas_3 = Pedido.objects.filter(distribuidor__in=Pessoa.objects.filter(recrutador__in=Pessoa.objects.filter(recrutador__in=Pessoa.objects.filter(recrutador=self.id))), status=3)
+                valor_vendas_recrutas_3 = 0
+
+                for venda in pedidos_vendas_recrutas_3:
+                    valor_vendas_recrutas_3 += venda.get_preco_pedido()
+
+                per_comissao_recrutas_3 = 1
+
+                comissao_venda_recrutas_3 = float(valor_vendas_recrutas_3*per_comissao_recrutas_3/100)
+
+                for venda in pedidos_vendas_recrutas_3:
+                    detalhe_comissao = DetalheComissao.objects.create(comissao=comissao, pedido=venda,
+                                                                      valor=venda.get_preco_pedido(),
+                                                                      percentual=per_comissao_recrutas_3, tipo=4,
+                                                                      valor_comissao=float(venda.get_preco_pedido()*per_comissao_recrutas_3/100))
+                    detalhe_comissao.save()
+
+                comissao.comissao = comissao_venda_direta + comissao_venda_recrutas_1 + comissao_venda_recrutas_2 + comissao_venda_recrutas_3
+                comissao.save()
+
+                return 'sucesso'
+        except Exception, e:
+            return e
 
 
 def validate_cpf(cpf):
